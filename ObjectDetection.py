@@ -42,10 +42,10 @@ def draw_bounding_boxes(image, boxes, confidences, classIDs, idxs, labels):
             w, h = boxes[i][2], boxes[i][3]
 
             # draw the bounding box and label on the image
-            cv2.rectangle(image, (x, y), (x + w, y + h), (255, 255, 255), 2)
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 0), 3)
             text = "{}: {:.4f}".format(labels[classIDs[i]], confidences[i])
-            cv2.putText(image, text, (x+5, y + 15),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+            cv2.putText(image, text, (x + 10, y + 25),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
 
     return image
 
@@ -71,12 +71,12 @@ def make_prediction(net, layer_names, labels, image, confidence, threshold):
 
 def detect(img, conf, nms):
     # get classes
-    with open('yolo copy.names', 'r') as f:
+    with open('yolo.names', 'r') as f:
         classes = f.read().splitlines()
 
     # load yolo model
     net = cv2.dnn.readNetFromDarknet(
-        'yolov3_custom_train.cfg', 'yolov3_custom_train_600.weights')
+        'yolov3_custom_train.cfg', 'yolov3_custom_train.backup')
 
     layer_names = net.getLayerNames()
     layer_names = [layer_names[i - 1]
@@ -98,14 +98,15 @@ def detect(img, conf, nms):
 
 if __name__ == '__main__':
     st.set_option('deprecation.showPyplotGlobalUse', False)
-    st.title("Aquarium Detection")
+    st.title("Wild animal Detection")
     conf_threshold = st.sidebar.slider(
-        "Confidence Threshold", 0.00, 1.00, 0.5, 0.01)
+        "Confidence Threshold", 0.00, 1.00, 0.4, 0.01)
     nms_threshold = st.sidebar.slider("NMS Threshold", 0.00, 1.00, 0.4, 0.01)
 
     # upload image
     imgfile = st.file_uploader(
         "Upload Image to Detect", type=['jpg', 'png', 'jpeg'])
+    st.write('For Buffalo, Elephant, Racoon, Rhino and Zebra')
 
     # detect
     if imgfile is not None:
